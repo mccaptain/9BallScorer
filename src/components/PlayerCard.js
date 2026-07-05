@@ -97,7 +97,7 @@ function makeStyles(t) {
       fontWeight: 'bold',
     },
     badgeValue: {
-      color: t.textPrimary,
+      color: t.gold,
       fontWeight: 'bold',
     },
     targetRow: {

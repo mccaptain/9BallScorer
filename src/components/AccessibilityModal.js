@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { useAccessibility } from '../context/AccessibilityContext';
 
 const LEVELS = ['S', 'M', 'L'];
+const THEME_KEYS = ['green', 'monokai', 'dark'];
+const THEME_LABELS = { green: 'Green', monokai: 'Monokai', dark: 'Dark' };
 
 export default function AccessibilityModal({ visible, onClose }) {
-  const { textSize, setTextSize, ballSize, setBallSize, darkMode, setDarkMode, theme } = useAccessibility();
+  const { textSize, setTextSize, ballSize, setBallSize, themeKey, setThemeKey, theme } = useAccessibility();
   const s = useMemo(() => makeStyles(theme), [theme]);
 
   return (
@@ -42,18 +44,15 @@ export default function AccessibilityModal({ visible, onClose }) {
 
           <Text style={s.label}>Theme</Text>
           <View style={s.row}>
-            <TouchableOpacity
-              style={[s.opt, !darkMode && s.optActive]}
-              onPress={() => setDarkMode(false)}
-            >
-              <Text style={[s.optText, !darkMode && s.optTextActive]}>Light</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[s.opt, darkMode && s.optActive]}
-              onPress={() => setDarkMode(true)}
-            >
-              <Text style={[s.optText, darkMode && s.optTextActive]}>Monokai</Text>
-            </TouchableOpacity>
+            {THEME_KEYS.map((k) => (
+              <TouchableOpacity
+                key={k}
+                style={[s.opt, themeKey === k && s.optActive]}
+                onPress={() => setThemeKey(k)}
+              >
+                <Text style={[s.optText, themeKey === k && s.optTextActive]}>{THEME_LABELS[k]}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <TouchableOpacity style={s.doneBtn} onPress={onClose}>

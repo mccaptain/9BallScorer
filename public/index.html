@@ -13,13 +13,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="9-Ball" />
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js');
-        });
-      }
-    </script>
     <style id="expo-reset">
       html, body { height: 100%; margin: 0; }
       body { overflow: hidden; background: #0d1f0d; }
@@ -27,6 +20,24 @@
     </style>
   </head>
   <body>
+    <script>
+      (function() {
+        var key = 'apa-scorer-accessibility-theme';
+        var bgMap = { green: '#0d1f0d', monokai: '#272822', dark: '#1a1a1a' };
+        var theme = (function(){ try { return localStorage.getItem(key); } catch(e) {} })() || 'green';
+        var bg = bgMap[theme] || '#0d1f0d';
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = bg;
+        document.body.style.background = bg;
+      })();
+    </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>

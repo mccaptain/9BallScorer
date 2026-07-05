@@ -30,18 +30,21 @@ function PlayerSection({ player, rack, otherRack, onToggle, onNamePress, rackPts
         rackPts={rackPts}
         onNamePress={onNamePress}
       />
-      <BallGrid
-        myPocketed={rack}
-        otherPocketed={otherRack}
-        onToggle={onToggle}
-        disabled={disabled}
-      />
+      <View style={pStyles.gridWrap}>
+        <BallGrid
+          myPocketed={rack}
+          otherPocketed={otherRack}
+          onToggle={onToggle}
+          disabled={disabled}
+        />
+      </View>
     </View>
   );
 }
 
 const pStyles = StyleSheet.create({
   section: { flex: 1, gap: 10 },
+  gridWrap: { flex: 1 },
 });
 
 export default function App() {
@@ -112,7 +115,7 @@ function useStyles(theme) {
 }
 
 function AppContent() {
-  const { theme } = useAccessibility();
+  const { theme, themeKey } = useAccessibility();
   const s = useStyles(theme);
 
   const [mode, setMode] = useState('home');
@@ -128,6 +131,16 @@ function AppContent() {
   const [match, setMatch] = useState(() => createMatch('Player 1', 'Player 2', 4, 4));
   const [showClearModal, setShowClearModal] = useState(false);
   const [renamePlayer, setRenamePlayer] = useState(null);
+
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const bgMap = { green: '#0d1f0d', monokai: '#272822', dark: '#1a1a1a' };
+      const bg = bgMap[themeKey] || '#0d1f0d';
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.content = bg;
+      document.body.style.background = bg;
+    }
+  }, [themeKey]);
 
   useEffect(() => {
     if (Platform.OS === 'web' && 'serviceWorker' in navigator) {
@@ -223,7 +236,7 @@ function AppContent() {
   if (mode === 'home') {
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor={theme.surface} />
         <View style={s.homeContainer}>
           <Text style={s.homeTitle}>APA 9-Ball</Text>
           <TouchableOpacity
@@ -250,7 +263,7 @@ function AppContent() {
   if (mode === 'teamSetup') {
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor={theme.surface} />
         <TeamSetupScreen onStart={handleTeamSetup} />
       </SafeAreaView>
     );
@@ -259,7 +272,7 @@ function AppContent() {
   if (mode === 'teamList') {
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor={theme.surface} />
         <MatchListScreen
           teamMatch={teamMatch}
           setTeamMatch={setTeamMatch}
@@ -273,7 +286,7 @@ function AppContent() {
   if (mode === 'teamSummary') {
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor={theme.surface} />
         <TeamSummaryScreen
           teamMatch={teamMatch}
           onNew={() => {
@@ -297,7 +310,7 @@ function AppContent() {
     );
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor={theme.surface} />
         <View style={s.winnerContainer}>
           <Text style={s.trophy}>🏆</Text>
           <Text style={s.winnerTitle}>
@@ -337,7 +350,7 @@ function AppContent() {
     const { winner: winnerPts, loser: loserPts } = getMatchPoints(l.sl, l.points);
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor={theme.surface} />
         <View style={s.winnerContainer}>
           <Text style={s.trophy}>🏆</Text>
           <Text style={s.winnerTitle}>Match Over!</Text>
@@ -404,7 +417,7 @@ function AppContent() {
 
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="light" />
+      <StatusBar style="light" backgroundColor={theme.surface} />
 
       <View style={[s.header, isLandscape && s.headerLandscape]}>
         {isTeamMode && (

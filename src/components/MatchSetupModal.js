@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 export default function MatchSetupModal({ visible, teamAName, teamBName, onStart, onCancel }) {
+  const { theme } = useAccessibility();
+  const s = useMemo(() => makeStyles(theme), [theme]);
   const [aName, setAName] = useState('');
   const [aSl, setASl] = useState('4');
   const [bName, setBName] = useState('');
@@ -18,40 +21,40 @@ export default function MatchSetupModal({ visible, teamAName, teamBName, onStart
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
-      <View style={styles.overlay}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Set Match Players</Text>
-          <View style={styles.col}>
-            <Text style={styles.teamLabel}>{teamAName}</Text>
-            <TextInput style={styles.input} value={aName} onChangeText={setAName} placeholder="Player name" placeholderTextColor="#666" />
+      <View style={s.overlay}>
+        <View style={s.card}>
+          <Text style={s.title}>Set Match Players</Text>
+          <View style={s.col}>
+            <Text style={s.teamLabel}>{teamAName}</Text>
+            <TextInput style={s.input} value={aName} onChangeText={setAName} placeholder="Player name" placeholderTextColor={theme.textDark} />
             <TextInput
-              style={styles.slInput}
+              style={s.slInput}
               value={aSl}
               onChangeText={setASl}
               keyboardType="number-pad"
               placeholder="SL"
-              placeholderTextColor="#666"
+              placeholderTextColor={theme.textDark}
             />
           </View>
-          <Text style={styles.vs}>VS</Text>
-          <View style={styles.col}>
-            <Text style={styles.teamLabel}>{teamBName}</Text>
-            <TextInput style={styles.input} value={bName} onChangeText={setBName} placeholder="Player name" placeholderTextColor="#666" />
+          <Text style={s.vs}>VS</Text>
+          <View style={s.col}>
+            <Text style={s.teamLabel}>{teamBName}</Text>
+            <TextInput style={s.input} value={bName} onChangeText={setBName} placeholder="Player name" placeholderTextColor={theme.textDark} />
             <TextInput
-              style={styles.slInput}
+              style={s.slInput}
               value={bSl}
               onChangeText={setBSl}
               keyboardType="number-pad"
               placeholder="SL"
-              placeholderTextColor="#666"
+              placeholderTextColor={theme.textDark}
             />
           </View>
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.cancelBtn} onPress={onCancel}>
-              <Text style={styles.cancelBtnText}>Cancel</Text>
+          <View style={s.actions}>
+            <TouchableOpacity style={s.cancelBtn} onPress={onCancel}>
+              <Text style={s.cancelBtnText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.startBtn} onPress={handleStart}>
-              <Text style={styles.startBtnText}>Start Match</Text>
+            <TouchableOpacity style={s.startBtn} onPress={handleStart}>
+              <Text style={s.startBtnText}>Start Match</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -60,18 +63,20 @@ export default function MatchSetupModal({ visible, teamAName, teamBName, onStart
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', padding: 24 },
-  card: { backgroundColor: '#142814', borderRadius: 12, padding: 20, borderWidth: 1, borderColor: '#2a4a2a' },
-  title: { fontSize: 18, fontWeight: 'bold', color: '#ffd700', textAlign: 'center', marginBottom: 16 },
-  col: { marginBottom: 10 },
-  teamLabel: { fontSize: 12, color: '#8a8', fontWeight: 'bold', marginBottom: 4 },
-  input: { backgroundColor: '#1a3a1a', borderRadius: 6, padding: 10, fontSize: 15, color: '#fff', marginBottom: 6 },
-  slInput: { backgroundColor: '#1a3a1a', borderRadius: 6, padding: 8, fontSize: 14, color: '#ffd700', width: 60, textAlign: 'center' },
-  vs: { fontSize: 14, fontWeight: 'bold', color: '#666', textAlign: 'center', marginVertical: 6 },
-  actions: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  cancelBtn: { flex: 1, backgroundColor: '#333', borderRadius: 8, padding: 12, alignItems: 'center' },
-  cancelBtnText: { color: '#aaa', fontSize: 15 },
-  startBtn: { flex: 1, backgroundColor: '#2e7d32', borderRadius: 8, padding: 12, alignItems: 'center' },
-  startBtnText: { color: '#fff', fontSize: 15, fontWeight: 'bold' },
-});
+function makeStyles(t) {
+  return StyleSheet.create({
+    overlay: { flex: 1, backgroundColor: t.overlay, justifyContent: 'center', padding: 24 },
+    card: { backgroundColor: t.surface, borderRadius: 12, padding: 20, borderWidth: 1, borderColor: t.border },
+    title: { fontSize: 18, fontWeight: 'bold', color: t.gold, textAlign: 'center', marginBottom: 16 },
+    col: { marginBottom: 10 },
+    teamLabel: { fontSize: 12, color: t.textSecondary, fontWeight: 'bold', marginBottom: 4 },
+    input: { backgroundColor: t.surfaceLight, borderRadius: 6, padding: 10, fontSize: 15, color: t.textPrimary, marginBottom: 6 },
+    slInput: { backgroundColor: t.surfaceLight, borderRadius: 6, padding: 8, fontSize: 14, color: t.gold, width: 60, textAlign: 'center' },
+    vs: { fontSize: 14, fontWeight: 'bold', color: t.textDark, textAlign: 'center', marginVertical: 6 },
+    actions: { flexDirection: 'row', gap: 10, marginTop: 12 },
+    cancelBtn: { flex: 1, backgroundColor: t.btnNeutral, borderRadius: 8, padding: 12, alignItems: 'center' },
+    cancelBtnText: { color: t.btnNeutralText, fontSize: 15 },
+    startBtn: { flex: 1, backgroundColor: t.btnPrimary, borderRadius: 8, padding: 12, alignItems: 'center' },
+    startBtnText: { color: t.btnPrimaryText, fontSize: 15, fontWeight: 'bold' },
+  });
+}

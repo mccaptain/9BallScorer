@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { light, dark } from './theme';
+import { green, monokai, dark } from './theme';
 
 const SIZES = { S: 1.3, M: 1.6, L: 2.0 };
 const STORAGE_KEY = 'apa-scorer-accessibility';
+
+const THEMES = { green, monokai, dark };
 
 function load(key) {
   if (typeof window === 'undefined') return null;
@@ -21,16 +23,16 @@ const AccessibilityContext = createContext();
 export function AccessibilityProvider({ children }) {
   const [textSize, setTextSize] = useState(() => load(STORAGE_KEY + '-textSize') || 'S');
   const [ballSize, setBallSize] = useState(() => load(STORAGE_KEY + '-ballSize') || 'S');
-  const [darkMode, setDarkMode] = useState(() => load(STORAGE_KEY + '-darkMode') === 'true');
+  const [themeKey, setThemeKey] = useState(() => load(STORAGE_KEY + '-theme') || 'green');
 
   useEffect(() => { save(STORAGE_KEY + '-textSize', textSize); }, [textSize]);
   useEffect(() => { save(STORAGE_KEY + '-ballSize', ballSize); }, [ballSize]);
-  useEffect(() => { save(STORAGE_KEY + '-darkMode', String(darkMode)); }, [darkMode]);
+  useEffect(() => { save(STORAGE_KEY + '-theme', themeKey); }, [themeKey]);
 
-  const theme = darkMode ? dark : light;
+  const theme = THEMES[themeKey] || green;
 
   return (
-    <AccessibilityContext.Provider value={{ textSize, setTextSize, ballSize, setBallSize, darkMode, setDarkMode, textScale: SIZES[textSize], ballScale: SIZES[ballSize], theme }}>
+    <AccessibilityContext.Provider value={{ textSize, setTextSize, ballSize, setBallSize, themeKey, setThemeKey, textScale: SIZES[textSize], ballScale: SIZES[ballSize], theme }}>
       {children}
     </AccessibilityContext.Provider>
   );

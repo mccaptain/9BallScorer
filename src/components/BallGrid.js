@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useMemo, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import { useAccessibility } from '../context/AccessibilityContext';
 
 const BALL_COLORS = {
@@ -8,14 +8,22 @@ const BALL_COLORS = {
 };
 
 const ROWS = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+const RATIO = 3 + 2 * (10 / 36); // ballSize * 3 + gap * 2, gap = ballSize * 10/36
 
 export default function BallGrid({ myPocketed, otherPocketed, onToggle, numberCircleSize = 18, disabled = false }) {
-  const { ballScale, textScale, theme } = useAccessibility();
+  const { ballScale, theme } = useAccessibility();
+  const { width: windowWidth } = useWindowDimensions();
   const s = useMemo(() => makeStyles(theme), [theme]);
-  const ballSize = Math.round(36 * ballScale);
-  const circleSize = Math.round(numberCircleSize * ballScale);
-  const ballFontSize = Math.round(12 * textScale);
-  const gap = Math.round(10 * ballScale);
+  const [availWidth, setAvailWidth] = useState(0);
+  const [availHeight, setAvailHeight] = useState(Infinity);
+  const effectiveWidth = availWidth > 0 ? availWidth : windowWidth * 0.85;
+  const fillRatio = Math.min(1, 0.7 + (ballScale - 1.3) * 0.5);
+  const fromWidth = Math.floor((effectiveWidth * fillRatio) / RATIO);
+  const fromHeight = availHeight < Infinity ? Math.floor(availHeight / RATIO) : Infinity;
+  const ballSize = Math.max(16, Math.min(fromWidth, fromHeight));
+  const gap = Math.round(ballSize * (10 / 36));
+  const circleSize = Math.round(ballSize * (numberCircleSize / 36));
+  const ballFontSize = Math.round(ballSize * (12 / 36));
 
   function renderBall(n) {
     const myState = myPocketed[n];
@@ -43,12 +51,12 @@ export default function BallGrid({ myPocketed, otherPocketed, onToggle, numberCi
         style={[
           s.ball,
           { width: ballSize, height: ballSize, borderRadius: ballSize / 2 },
-          { backgroundColor: BALL_COLORS[n] || '#fff' },
+          { backgroundColor: n === 1 ? theme.ball1Color : BALL_COLORS[n] || (n === 9 ? theme.ball9Color : '#fff') },
           stateStyle,
         ]}
       >
         {n === 9 && (
-          <View style={[s.stripeWrap, { width: ballSize, height: ballSize }]}>
+          <View style={s.stripeWrap}>
             <View style={[s.stripe, { width: Math.round(ballSize * 0.6), borderRadius: Math.round(ballSize * 0.06) }]} />
           </View>
         )}
@@ -65,7 +73,7 @@ export default function BallGrid({ myPocketed, otherPocketed, onToggle, numberCi
   }
 
   return (
-    <View>
+    <View style={{ flex: 1 }} onLayout={(e) => { setAvailWidth(e.nativeEvent.layout.width); setAvailHeight(e.nativeEvent.layout.height); }}>
       {ROWS.map((row, i) => (
         <View key={row[0]} style={[s.row, { gap, marginBottom: i < 2 ? gap : 0 }]}>
           {row.map(renderBall)}
@@ -93,7 +101,7 @@ function makeStyles(t) {
     },
     stripe: {
       height: '100%',
-      backgroundColor: '#f5c518',
+      backgroundColor: t.stripeColor,
     },
     numberCircle: {
       backgroundColor: t.numberCircle,
