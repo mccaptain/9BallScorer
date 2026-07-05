@@ -1,24 +1,42 @@
 {
   "expo": {
-    "name": "apa-scorer",
+    "name": "APA 9-Ball Scorer",
     "slug": "apa-scorer",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "description": "APA 9-Ball match scoring app with Equalizer handicap system",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0d1f0d"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.apascorer.app"
     },
     "android": {
+      "package": "com.apascorer.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0d1f0d",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "shortName": "9-Ball",
+      "themeColor": "#0d1f0d",
+      "backgroundColor": "#0d1f0d",
+      "display": "standalone",
+      "orientation": "any",
+      "scope": "/",
+      "startUrl": "/",
+      "lang": "en-US",
+      "description": "APA 9-Ball match scoring",
+      "barStyle": "black-translucent"
     }
   }
 }
